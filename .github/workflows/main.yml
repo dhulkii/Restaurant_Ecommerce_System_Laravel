@@ -1,0 +1,50 @@
+name: Go CI/CD
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Checkout the code
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    # Set up Go environment
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: 1.23.2  # Replace with your Go version
+
+
+    # Install dependencies
+    - name: Install dependencies
+      run: |
+        cd /home/ubuntu/ea-bookings
+        go mod tidy
+
+    # Run tests
+    #- name: Run tests
+    #  run: go test ./...
+
+    # Build the app
+    - name: Build
+      run: |
+        cd /home/ubuntu/ea-bookings/cmd
+        go build -o ../test-go
+
+    # Run the app
+    - name: Run app
+      run: |
+        cd /home/ubuntu/ea-bookings
+        ./test-go
+
+    - name: daemon-reload
+      run: sudo systemctl daemon-reload
